@@ -1,3 +1,5 @@
+const { startTransition } = require("react");
+
 const question = document.getElementById('question');
 const choices = document.getElementsByClassName('choice-text');
 const progressText = document.getElementById('progressText');
@@ -83,4 +85,57 @@ let questions = [
         choice4: "600,000 km/s",
         answer: 1
     }
-]
+];
+
+//constants
+const CORRECT_BONUS=10;
+const MAX_QUESTIONS = 10;
+
+startGame = () =>{
+    questionCounter = 0;
+    score = 0;
+    availableQuestions = [...questions];
+    getNewQuestion();
+};
+
+getNewQuestion = () =>{
+    if(availableQuestions.length === 0 || questionCounter >= MAX_QUESTIONS) {
+        localStorage.setItem('mostRecentScore', score);
+        return window.location.assign('end.html');
+    }
+
+    questionCounter++;
+    progressText.innerText = `Question ${questionCounter}/${MAX_QUESTIONS}`;
+    progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`;
+
+    const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+    curretQuestion = availableQuestions[questionIndex];
+    question.innerText = curretQuestion.question;
+
+    choices.forEach(choice => {
+        choice.addEventListener('click', e =>{
+            if(!acceptingAnswers) return;
+
+            acceptingAnswers = false;
+            const selectedChoice = e.target;
+            const selectedAnswer = selectedChoice.dataset['number'];
+
+            const classToApply = selectedAnswer == curretQuestion.answer ? 'correct' : 'incorrect';
+
+            if(classToApply === 'correct'){
+                incrementScore(CORRECT_BONUS);
+            }
+            selectedChoice.parseElement.classList.add(classToApply);
+
+            setTimeout(() => {
+                selectedChoice.parcentElement.classList.remove(classToApply);
+                getNewQuestion();
+            }, 1000);
+        });
+    });
+
+incrementScore = num => {
+    score += num;
+    scoreText.innerText = score;
+};
+startGame();
