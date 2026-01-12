@@ -110,6 +110,10 @@ getNewQuestion = () =>{
     currentQuestion = availableQuestions[questionIndex];
     question.innerText = currentQuestion.question;
 
+    Array.from(choices).forEach((choice, index) => {
+        choice.innerText = currentQuestion['choice' + (index + 1)];
+    });
+
     choices.forEach(choice => {
         choice.addEventListener('click', e =>{
             if(!acceptingAnswers) return;
@@ -131,6 +135,9 @@ getNewQuestion = () =>{
             }, 1000);
         });
     });
+
+    acceptingAnswers = true;
+};
 
 incrementScore = num => {
     score += num;
