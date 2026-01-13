@@ -138,7 +138,6 @@ choices.forEach(choice => {
         }, 1000);
     });
 });
-};
 
 incrementScore = num => {
     score += num;
